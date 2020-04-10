@@ -24,12 +24,8 @@ app.post("/repositories", (request, response) => {
   return response.json(repository);
 });
 
-app.patch("/repositories/:id", (request, response) => {
+app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
-  if (!isUuid(id)) {
-    return response.status(400).json({ error: "Invalid project ID" });
-  }
-  
   const { title, url, techs } = request.body;
 
   const repositoryIndex = repositories.findIndex(repo => repo.id === id);
@@ -54,10 +50,6 @@ app.patch("/repositories/:id", (request, response) => {
 app.delete("/repositories/:id", (request, response) => {
   const { id } = request.params;
   
-  if (!isUuid(id)) {
-    return response.status(400).json({ error: "Invalid project ID" });
-  }
-
   const repositoryIndex = repositories.findIndex(repo => repo.id === id);
 
   if (repositoryIndex < 0) {
@@ -71,16 +63,14 @@ app.delete("/repositories/:id", (request, response) => {
 
 app.post("/repositories/:id/like", (request, response) => {
   const { id } = request.params;
-  if (!isUuid(id)) {
-    return response.status(400).json({ error: "Invalid project ID" });
-  }
-  
 
   const repositoryIndex = repositories.findIndex(repo => repo.id === id);
+
   if (repositoryIndex < 0) {
     return response.status(400).json({ error: "Repository not found :(" });
   }
-  repositories[repositoryIndex].likes = repositories[repositoryIndex].likes + 1;
+
+  repositories[repositoryIndex].likes++;
 
   return response.json(repositories[repositoryIndex]);
 });
